@@ -3,4 +3,3 @@ psycopg2
 SQLAlchemy
 Flask-SQLAlchemy
 Flask-Migrate
-Flask-Script
