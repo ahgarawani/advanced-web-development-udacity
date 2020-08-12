@@ -1,5 +1,6 @@
 Flask
-Flask-Session
 psycopg2
 SQLAlchemy
 Flask-SQLAlchemy
+Flask-Migrate
+Flask-Script
