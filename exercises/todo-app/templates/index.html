@@ -2,6 +2,9 @@
     <head>
         <title>Todo List</title>
         <style>
+            body{
+                font-size: large;
+            }
             .hidden {
                 display: none;
             }
@@ -9,6 +12,19 @@
                 list-style: none;
                 padding: 5;
                 margin: 5;
+                width: 320px;
+            }
+            li{
+                clear: both;
+            }
+            li button{
+                background-color: transparent;
+                border: none;
+                outline: none;
+                color: red;
+                float: right;
+                cursor: pointer;
+                font-size: 20px;
             }
         </style>
     </head>
@@ -20,14 +36,18 @@
         </form>
         <ul id = "todos">
             {% for d in data %}
-            <li><input class="check-completed" data-id="{{ d.id }}" type="checkbox" {% if d.completed %} checked {% endif %} /> {{ d.description }}</li>
+            <li>
+                <input class="check-completed" data-id="{{ d.id }}" type="checkbox" {% if d.completed %} checked {% endif %} />
+                {{ d.description }}
+                <button class="delete-button" data-id="{{ d.id }}">&cross;</button>
+            </li>
             {% endfor %}
         </ul>
         <script>
             const checkboxes = document.querySelectorAll('.check-completed');
             for (let i = 0; i < checkboxes.length; i++){
-                    const checkbox = checkboxes[i];
-                    checkbox.onchange = function(e) {
+                const checkbox = checkboxes[i];
+                checkbox.onchange = function(e) {
                     const newCompleted = e.target.checked;
                     const todoId = e.target.dataset['id'];
                     fetch('/todos/' + todoId + '/set-completed', {
@@ -72,6 +92,17 @@
                 .catch(function() {
                     document.getElementById('error').className = '';
                 })
+            }
+
+            const delButtons = document.querySelectorAll('.delete-button');
+            for (let i = 0; i < delButtons.length; i++) {
+                const delButton = delButtons[i];
+                delButton.onclick = function(e) {
+                    const todoId = e.target.dataset['id'];
+                    fetch('/todos/' + todoId, {
+                        method: 'DELETE'
+                    });
+                }
             }
         </script>
     </body>
