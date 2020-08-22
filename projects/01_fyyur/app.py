@@ -209,7 +209,7 @@ def delete_venue(venue_id):
   if error:
     return abort(500)
   else:
-    return redirect(url_for('venues'), code=303)
+    return url_for('venues')
 
 
 
@@ -334,7 +334,7 @@ def create_artist_submission():
   if error:
     return abort(500)
   else:
-    return redirect(url_for('artists'))
+    return url_for('artists')
 
 
 @app.route('/artist/<artist_id>', methods=['DELETE'])
