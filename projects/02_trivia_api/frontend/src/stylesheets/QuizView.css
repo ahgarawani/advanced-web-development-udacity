@@ -25,6 +25,7 @@
     background-color: dodgerblue;
     color: white;
     padding: 3px 5px;
+    cursor: pointer;
     align-self: center;
 }
 
