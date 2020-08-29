@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, a
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import sys
+from sqlalchemy.orm import load_only
 
 app = Flask(__name__)
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ahgarawani:6898@localhost:5432/todoapp'
@@ -17,8 +18,8 @@ class Todo(db.Model):
     completed = db.Column(db.Boolean, nullable=False, default=False)
     list_id = db.Column(db.Integer, db.ForeignKey('todolists.id'), nullable=False)
     
-    def __repr__():
-        return f'<Todo {self.id} {self.description}>'
+    # def __repr__():
+    #     return f'<Todo {self.id} {self.description}>'
 
 
 class TodoList(db.Model):

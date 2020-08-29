@@ -100,18 +100,18 @@ class BookTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'bad request')
     
-    # def test_delete_book(self):
-    #     res = self.client().delete('/books/1')
-    #     data = json.loads(res.data)
+    def test_delete_book(self):
+        res = self.client().delete('/books/1')
+        data = json.loads(res.data)
 
-    #     book = Book.query.filter(Book.id == 1).one_or_none()
+        book = Book.query.filter(Book.id == 1).one_or_none()
 
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     self.assertEqual(data['deleted'], 1)
-    #     self.assertTrue(data['total_books'])
-    #     self.assertTrue(len(data['books']))
-    #     self.assertEqual(book, None)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['deleted'], 1)
+        self.assertTrue(data['total_books'])
+        self.assertTrue(len(data['books']))
+        self.assertEqual(book, None)
         
 
     def test_404_if_book_does_not_exist(self):
