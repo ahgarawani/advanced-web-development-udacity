@@ -16,7 +16,7 @@ CORS(app)
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
-#db_drop_and_create_all()
+db_drop_and_create_all()
 
 ## ROUTES
 '''
@@ -48,7 +48,7 @@ def get_drinks():
 
 @app.route('/drinks-detail')
 @requires_auth('get:drinks-detail')
-def get_drinks_details():
+def get_drinks_details(payload):
     drinks = Drink.query.all()
     return jsonify({
         "success": True,
@@ -67,13 +67,17 @@ def get_drinks_details():
 
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
-def add_drink():
+def add_drink(payload):
     body = request.get_json()
     title = body.get('title', None)
     recipe = body.get('recipe', None)
 
-    if not (title and recipe['color'] and recipe['name'] and recipe['parts']):
+    if not title:
         abort(400)
+    
+    for ingredient in recipe:
+        if not (ingredient['color'] and ingredient['name'] and ingredient['parts']):
+            abort(400)
 
     try:
         new_drink = Drink(
@@ -81,11 +85,11 @@ def add_drink():
             recipe=json.dumps(recipe)
         )
 
-        drink.insert()
+        new_drink.insert()
 
         return jsonify({
             "success": True,
-            "drinks": Drink.query.filter(Drink.id == drink.id).all()
+            "drinks": [new_drink.long()]
         }), 200
 
     except:
@@ -105,7 +109,7 @@ def add_drink():
 
 @app.route('/drinks/<int:id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
-def edit_drink(id):
+def edit_drink(payload, id):
     body = request.get_json()
     drink = Drink.query.filter(Drink.id == id).one_or_none()
 
@@ -120,16 +124,17 @@ def edit_drink(id):
             drink.title = title
 
         if recipe:
-            if not (recipe['color'] and recipe['name'] and recipe['parts']):
-                abort(400)
+            for ingredient in recipe:
+                if not (ingredient['color'] and ingredient['name'] and ingredient['parts']):
+                    abort(400)
 
-            drink.title = json.dumps(recipe)
+            drink.recipe = json.dumps(recipe)
 
         drink.update()
 
         return jsonify({
             "success": True,
-            "drinks": Drink.query.filter(Drink.id == drink.id).all()
+            "drinks": [drink.long()]
         }), 200
 
     except:
@@ -147,8 +152,8 @@ def edit_drink(id):
 '''
 
 @app.route('/drinks/<int:id>', methods=['DELETE'])
-@requires_auth('patch:drinks')
-def delete_drink(id):
+@requires_auth('delete:drinks')
+def delete_drink(payload, id):
     drink = Drink.query.filter(Drink.id == id).one_or_none()
 
     if not drink:
